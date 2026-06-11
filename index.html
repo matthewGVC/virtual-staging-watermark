@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>Watermark — GVC Real Estate Team</title>
+<meta name="description" content="Add a Virtually Staged or Virtually Renovated watermark to a listing photo."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --paper:#f4efe6;
+  --paper-2:#ece6d9;
+  --ink:#111111;
+  --ink-2:#2a2926;
+  --muted:#6b665c;
+  --rule:#d7d1c3;
+  --accent:#7a2e1f;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(0.2,0.8,0.2,1);
+}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--sans);
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+}
+a{color:inherit;text-decoration:none}
+
+.masthead{
+  display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  padding:18px 40px;
+  border-bottom:1px solid var(--rule);
+}
+.mast-left{font-family:var(--serif);font-size:17px;font-weight:400;letter-spacing:-0.01em}
+.mast-left em{font-style:italic;font-weight:300;color:var(--muted)}
+.mast-right{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase}
+.mast-right a{border-bottom:1px solid transparent;padding-bottom:2px;transition:border-color .2s}
+.mast-right a:hover{border-color:var(--ink)}
+
+.hero{
+  padding:48px 40px 36px;
+  border-bottom:1px solid var(--rule);
+}
+.hero h1{
+  font-family:var(--serif);
+  font-weight:300;
+  font-size:clamp(40px,6vw,72px);
+  line-height:0.95;
+  letter-spacing:-0.03em;
+}
+.hero h1 em{font-style:italic;font-weight:300;color:var(--ink-2)}
+
+.tool{
+  display:grid;
+  grid-template-columns:280px 1fr;
+  flex:1;
+  align-items:start;
+}
+.controls{
+  border-right:1px solid var(--rule);
+  padding:32px 28px 32px 40px;
+  display:flex;flex-direction:column;gap:28px;
+  position:sticky;top:0;
+}
+.ctl-group h4{
+  font-family:var(--mono);font-size:11px;color:var(--muted);
+  letter-spacing:0.14em;text-transform:uppercase;font-weight:400;
+  margin-bottom:10px;
+}
+.seg{display:flex;flex-direction:column;gap:6px}
+.seg.row{flex-direction:row;flex-wrap:wrap}
+.seg button{
+  font-family:var(--mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;
+  background:none;border:1px solid var(--rule);color:var(--ink-2);
+  padding:10px 14px;cursor:pointer;text-align:left;
+  transition:border-color .2s,background-color .2s,color .2s;
+}
+.seg.row button{flex:1;text-align:center;min-width:52px}
+.seg button:hover{border-color:var(--ink)}
+.seg button.active{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+
+#download{
+  font-family:var(--mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;
+  background:var(--accent);border:1px solid var(--accent);color:var(--paper);
+  padding:12px 14px;cursor:pointer;width:100%;
+  transition:opacity .2s;
+}
+#download:hover{opacity:0.88}
+#download:disabled,#reset:disabled{opacity:0.35;cursor:not-allowed}
+#reset{
+  font-family:var(--mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;
+  background:none;border:1px solid var(--rule);color:var(--muted);
+  padding:10px 14px;cursor:pointer;width:100%;margin-top:8px;
+  transition:border-color .2s,color .2s;
+}
+#reset:hover:enabled{border-color:var(--ink);color:var(--ink)}
+
+.stage{padding:32px 40px;min-width:0}
+#dropzone{
+  border:1px dashed var(--rule);
+  background:var(--paper-2);
+  min-height:420px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  cursor:pointer;text-align:center;padding:40px 24px;
+  transition:border-color .2s,background-color .2s;
+}
+#dropzone:hover,#dropzone.dragover{border-color:var(--accent)}
+#dropzone .dz-main{font-family:var(--serif);font-style:italic;font-weight:300;font-size:22px;color:var(--ink-2)}
+#dropzone .dz-sub{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase}
+#canvas{
+  display:block;max-width:100%;max-height:74vh;margin:0 auto;
+  border:1px solid var(--rule);
+}
+#filemeta{
+  font-family:var(--mono);font-size:11px;color:var(--muted);
+  letter-spacing:0.08em;text-transform:uppercase;
+  margin-top:12px;text-align:center;
+}
+
+footer.site-foot{
+  padding:24px 40px;
+  border-top:1px solid var(--rule);
+  display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  font-family:var(--mono);font-size:11px;color:var(--muted);
+  letter-spacing:0.06em;text-transform:uppercase;
+}
+
+@media (max-width:820px){
+  .masthead{padding:12px 16px}
+  .mast-left{font-size:14px}
+  .hero{padding:32px 16px 24px}
+  .tool{grid-template-columns:1fr}
+  .controls{
+    border-right:0;border-bottom:1px solid var(--rule);
+    padding:24px 16px;position:static;gap:20px;
+  }
+  .stage{padding:24px 16px}
+  #dropzone{min-height:300px}
+  footer.site-foot{padding:18px 16px}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="mast-left">GVC Real Estate Team <em>— Watermark Tool</em></div>
+  <div class="mast-right"><a href="mailto:matthew@gvcrealestateteam.com">Contact</a></div>
+</header>
+
+<section class="hero">
+  <h1>Photo <em>Watermark</em></h1>
+</section>
+
+<main class="tool">
+  <aside class="controls">
+    <div class="ctl-group">
+      <h4>Label</h4>
+      <div class="seg" id="label-seg">
+        <button data-label="VIRTUALLY STAGED" class="active">Virtually Staged</button>
+        <button data-label="VIRTUALLY RENOVATED">Virtually Renovated</button>
+      </div>
+    </div>
+    <div class="ctl-group">
+      <h4>Corner</h4>
+      <div class="seg row" id="corner-seg">
+        <button data-corner="tl" class="active">TL</button>
+        <button data-corner="tr">TR</button>
+        <button data-corner="bl">BL</button>
+        <button data-corner="br">BR</button>
+      </div>
+    </div>
+    <div class="ctl-group">
+      <h4>Export</h4>
+      <button id="download" disabled>Download</button>
+      <button id="reset" disabled>Change photo</button>
+    </div>
+  </aside>
+
+  <section class="stage">
+    <div id="dropzone">
+      <span class="dz-main">Drop a photo here</span>
+      <span class="dz-sub">or click to browse — JPG / PNG</span>
+    </div>
+    <canvas id="canvas" hidden></canvas>
+    <p id="filemeta" hidden></p>
+    <input type="file" id="file" accept="image/*" hidden/>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <span>© <span id="year"></span> — GVC Real Estate Team</span>
+  <span>Photos are processed in your browser. Nothing is uploaded.</span>
+</footer>
+
+<script>
+document.getElementById("year").textContent = new Date().getFullYear();
+
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const dropzone = document.getElementById("dropzone");
+const fileInput = document.getElementById("file");
+const filemeta = document.getElementById("filemeta");
+const downloadBtn = document.getElementById("download");
+const resetBtn = document.getElementById("reset");
+
+let img = null;
+let fileName = "photo";
+let fileType = "image/jpeg";
+let label = "VIRTUALLY STAGED";
+let corner = "tl";
+
+function draw(){
+  if(!img) return;
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+  ctx.drawImage(img, 0, 0);
+
+  const w = canvas.width, h = canvas.height;
+  const fontSize = Math.max(14, Math.round(Math.min(w, h) * 0.032));
+  ctx.font = "600 " + fontSize + "px Inter, Arial, sans-serif";
+  if("letterSpacing" in ctx) ctx.letterSpacing = Math.round(fontSize * 0.08) + "px";
+
+  const tw = ctx.measureText(label).width;
+  const padX = Math.round(fontSize * 0.9);
+  const padY = Math.round(fontSize * 0.55);
+  const margin = Math.round(Math.min(w, h) * 0.035);
+  const boxW = tw + padX * 2;
+  const boxH = fontSize + padY * 2;
+
+  const x = corner === "tl" || corner === "bl" ? margin : w - margin - boxW;
+  const y = corner === "tl" || corner === "tr" ? margin : h - margin - boxH;
+
+  ctx.fillStyle = "rgba(17,17,17,0.55)";
+  ctx.beginPath();
+  ctx.roundRect(x, y, boxW, boxH, Math.round(fontSize * 0.25));
+  ctx.fill();
+
+  ctx.fillStyle = "#ffffff";
+  ctx.textBaseline = "middle";
+  ctx.fillText(label, x + padX, y + boxH / 2 + fontSize * 0.06);
+}
+
+function loadFile(file){
+  if(!file || !file.type.startsWith("image/")) return;
+  fileName = file.name.replace(/\.[^.]+$/, "") || "photo";
+  fileType = file.type === "image/png" ? "image/png" : "image/jpeg";
+  const url = URL.createObjectURL(file);
+  const im = new Image();
+  im.onload = () => {
+    URL.revokeObjectURL(url);
+    img = im;
+    dropzone.hidden = true;
+    canvas.hidden = false;
+    filemeta.hidden = false;
+    filemeta.textContent = file.name + " — " + im.naturalWidth + " × " + im.naturalHeight;
+    downloadBtn.disabled = false;
+    resetBtn.disabled = false;
+    document.fonts.load(ctx.font = "600 32px Inter").then(draw).catch(draw);
+  };
+  im.src = url;
+}
+
+dropzone.addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", () => loadFile(fileInput.files[0]));
+
+["dragover","dragenter"].forEach(ev => dropzone.addEventListener(ev, e => {
+  e.preventDefault();
+  dropzone.classList.add("dragover");
+}));
+["dragleave","drop"].forEach(ev => dropzone.addEventListener(ev, e => {
+  e.preventDefault();
+  dropzone.classList.remove("dragover");
+}));
+dropzone.addEventListener("drop", e => loadFile(e.dataTransfer.files[0]));
+
+function wireSeg(id, attr, cb){
+  const seg = document.getElementById(id);
+  seg.addEventListener("click", e => {
+    const btn = e.target.closest("button");
+    if(!btn) return;
+    seg.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    cb(btn.dataset[attr]);
+    draw();
+  });
+}
+wireSeg("label-seg", "label", v => label = v);
+wireSeg("corner-seg", "corner", v => corner = v);
+
+downloadBtn.addEventListener("click", () => {
+  if(!img) return;
+  const suffix = label === "VIRTUALLY STAGED" ? "virtually-staged" : "virtually-renovated";
+  const ext = fileType === "image/png" ? "png" : "jpg";
+  canvas.toBlob(blob => {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = fileName + "-" + suffix + "." + ext;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  }, fileType, 0.92);
+});
+
+resetBtn.addEventListener("click", () => {
+  img = null;
+  canvas.hidden = true;
+  filemeta.hidden = true;
+  dropzone.hidden = false;
+  downloadBtn.disabled = true;
+  resetBtn.disabled = true;
+  fileInput.value = "";
+});
+</script>
+
+</body>
+</html>
